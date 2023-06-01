@@ -9,7 +9,7 @@ public class MainClass
         // você precisa exibir os pedidos na ordem em que foram recebidos,
         // para que a equipe de preparação possa trabalhar neles sequencialmente.
 
-        // TestListaEncadeadaPedidos();
+        TestListaEncadeadaPedidos();
         // INSERE 3 PEDIDOS
         // MOSTRAR PEDIDOS
         // Nome: João, Quantidade: 3, Valor: 30
