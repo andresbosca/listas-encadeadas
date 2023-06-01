@@ -2,18 +2,18 @@ namespace ConsoleApp1;
 
 public class ListaDuplamenteEncadeada
 {
-    private NoDuplo<string>? Primeiro { get; set; }
+    private NoDuplo<Musica>? Primeiro { get; set; }
 
-    public void InserirInicio(string value)
+    public void InserirInicio(Musica value)
     {
-        NoDuplo<string> novoNo = new(value, Primeiro); //Cria um novo nó
+        NoDuplo<Musica> novoNo = new(value, Primeiro); //Cria um novo nó
         if (Primeiro != null)
             Primeiro.Anterior = novoNo; //O anterior do primeiro nó passa a ser o nó criado
 
         Primeiro = novoNo; //O primeiro nó passa a ser o nó criado
     }
 
-    public void InserirPosicao(int posicao, string value)
+    public void InserirPosicao(int posicao, Musica value)
     {
         if (posicao == 0)
         {
@@ -21,7 +21,7 @@ public class ListaDuplamenteEncadeada
             return;
         }
 
-        NoDuplo<string>? no = Primeiro;
+        NoDuplo<Musica>? no = Primeiro;
         for (int i = 0; i <= posicao; i++)
         {
             if (i == posicao - 1)
@@ -37,7 +37,7 @@ public class ListaDuplamenteEncadeada
             }
         }
 
-        NoDuplo<string> novoNo = new(value, no?.Proximo, no); //O próximo passa a ser o próximo do próximo
+        NoDuplo<Musica> novoNo = new(value, no?.Proximo, no); //O próximo passa a ser o próximo do próximo
         no!.Proximo = novoNo; //O primeiro nó passa a ser o nó criado
     }
 
@@ -53,7 +53,7 @@ public class ListaDuplamenteEncadeada
 
         if (asc)
         {
-            NoDuplo<string>? no = Primeiro;
+            NoDuplo<Musica>? no = Primeiro;
             while (no != null)
             {
                 Console.WriteLine(no.Valor);
@@ -62,7 +62,7 @@ public class ListaDuplamenteEncadeada
         }
         else
         {
-            NoDuplo<string>? no = Primeiro;
+            NoDuplo<Musica>? no = Primeiro;
             while (no?.Proximo != null)
                 no = no.Proximo;
 
@@ -74,12 +74,12 @@ public class ListaDuplamenteEncadeada
         }
     }
 
-    public NoDuplo<string>? Pesquisar(string value)
+    public NoDuplo<Musica>? Pesquisar(string value)
     {
-        NoDuplo<string>? no = Primeiro;
+        NoDuplo<Musica>? no = Primeiro;
         while (no != null)
         {
-            if (no.Valor == value)
+            if (no.Valor.Nome == value)
                 return no;
 
             no = no.Proximo;
@@ -108,7 +108,7 @@ public class ListaDuplamenteEncadeada
             return;
         }
 
-        NoDuplo<string>? no = Primeiro;
+        NoDuplo<Musica>? no = Primeiro;
         for (int i = 0; i <= posicao; i++)
         {
             if (i == posicao - 1)
@@ -134,6 +134,17 @@ public class ListaDuplamenteEncadeada
         no.Proximo!.Anterior = no;
     }
 
+    internal void VoltarMusica()
+    {
+        if (Primeiro is null)
+        {
+            Console.WriteLine("Lista vazia");
+            return;
+        }
+
+        Primeiro = Primeiro.Anterior;
+    }
+
     public class NoDuplo<T>
     {
         public T Valor { get; set; }
@@ -147,6 +158,20 @@ public class ListaDuplamenteEncadeada
             Anterior = anterior;
         }
 
-        public void ImprimirValor() => Console.WriteLine(Valor);
+        public void ImprimirValor() => Console.WriteLine(Valor?.ToString());
     }
+}
+
+public class Musica
+{
+    public string Nome { get; set; }
+    public int Duracao { get; set; }
+
+    public Musica(string nome, int duracao)
+    {
+        Nome = nome;
+        Duracao = duracao;
+    }
+
+    public override string ToString() => $"Nome: {Nome}, Duração: {Duracao}";
 }

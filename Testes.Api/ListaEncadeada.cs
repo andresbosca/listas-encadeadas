@@ -2,15 +2,15 @@ namespace ConsoleApp1;
 
 public class ListaEncadeada
 {
-    private No? Primeiro { get; set; }
+    private No<Pedido>? Primeiro { get; set; }
 
-    public void InserirInicio(string value)
+    public void InserirInicio(Pedido value)
     {
-        No novoNo = new(value, Primeiro); //Cria um novo nó
+        No<Pedido> novoNo = new(value, Primeiro); //Cria um novo nó
         Primeiro = novoNo; //O primeiro nó passa a ser o nó criado
     }
 
-    public void InserirPosicao(int posicao, string value)
+    public void InserirPosicao(int posicao, Pedido value)
     {
         if (posicao == 0)
         {
@@ -18,14 +18,14 @@ public class ListaEncadeada
             return;
         }
 
-        No? no = Primeiro;
+        No<Pedido>? no = Primeiro;
         for (int i = 0; i <= posicao; i++)
         {
             if (i == posicao - 1)
                 break;
 
             if (i != posicao)
-                no = no.Proximo;
+                no = no?.Proximo;
 
             if (no == null)
             {
@@ -34,7 +34,13 @@ public class ListaEncadeada
             }
         }
 
-        No novoNo = new(value, no.Proximo); //O próximo passa a ser o próximo do próximo
+        No<Pedido> novoNo = new(value, no?.Proximo); //O próximo passa a ser o próximo do próximo
+
+        if (no is null)
+        {
+            Console.WriteLine($"Erro ao inserir, a lista não vai até a posição {posicao}");
+            return;
+        }
         no.Proximo = novoNo; //O primeiro nó passa a ser o nó criado
     }
 
@@ -46,7 +52,7 @@ public class ListaEncadeada
             return;
         }
 
-        No? no = Primeiro;
+        No<Pedido>? no = Primeiro;
         while (no != null)
         {
             no.ImprimirValor();
@@ -54,7 +60,7 @@ public class ListaEncadeada
         }
     }
 
-    public No? Pesquisar(string valor)
+    public No<Pedido>? Pesquisar(string nome)
     {
         if (Primeiro is null)
         {
@@ -62,10 +68,10 @@ public class ListaEncadeada
             return null;
         }
 
-        No? no = Primeiro;
+        No<Pedido>? no = Primeiro;
         while (no != null)
         {
-            if (no.Valor.Equals(valor)) //Se for igual retorna o nó
+            if (no.Valor.Nome.Equals(nome)) //Se for igual retorna o nó
                 return no;
 
             no = no.Proximo;
@@ -88,20 +94,25 @@ public class ListaEncadeada
 
     public void ExcluirPosicao(int posicao)
     {
+        if (posicao < 0)
+        {
+            ExcluirFim();
+            return;
+        }
         if (posicao == 0)
         {
             ExcluirInicio();
             return;
         }
 
-        No? no = Primeiro;
+        No<Pedido>? no = Primeiro;
         for (int i = 0; i <= posicao; i++)
         {
             if (i == posicao - 1)
                 break;
 
             if (i != posicao)
-                no = no.Proximo;
+                no = no?.Proximo;
 
             if (no == null)
             {
@@ -110,20 +121,63 @@ public class ListaEncadeada
             }
         }
 
+        if (no is null || no.Proximo is null)
+        {
+            Console.WriteLine($"Erro ao excluir, a lista não vai até a posição {posicao}");
+            return;
+        }
+
         no.Proximo = no.Proximo?.Proximo; //O nó passa a ser o próximo
     }
 
-    public class No
+    public void ExcluirFim()
     {
-        public string Valor { get; set; }
-        public No? Proximo { get; set; }
+        if (Primeiro is null)
+        {
+            Console.WriteLine("A lista está vazia");
+            return;
+        }
 
-        public No(string valor, No? proximo = null)
+        No<Pedido>? no = Primeiro;
+        while (no != null)
+        {
+            if (no.Proximo?.Proximo is null) //Se o próximo do próximo for nulo, o próximo é o último
+            {
+                no.Proximo = null;
+                return;
+            }
+
+            no = no.Proximo;
+        }
+    }
+
+    public class No<T>
+    {
+        public T Valor { get; set; }
+        public No<T>? Proximo { get; set; }
+
+        public No(T valor, No<T>? proximo = null)
         {
             Valor = valor;
             Proximo = proximo;
         }
 
-        public void ImprimirValor() => Console.WriteLine(Valor);
+        public void ImprimirValor() => Console.WriteLine(Valor?.ToString());
     }
+}
+
+public class Pedido
+{
+    public string Nome { get; set; }
+    public int Quantidade { get; set; }
+    public decimal Valor { get; set; }
+
+    public Pedido(string nome, int quantidade, decimal valor)
+    {
+        Nome = nome;
+        Quantidade = quantidade;
+        Valor = valor;
+    }
+
+    public override string ToString() => $"Nome: {Nome}, Quantidade: {Quantidade}, Valor: {Valor}";
 }
